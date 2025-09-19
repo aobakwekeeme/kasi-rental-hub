@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import LandingPage from './components/LandingPage';
-import SignInPage from './components/SignInPage';
 import ShopOwnerDashboard from './components/ShopOwnerDashboard';
 import GovernmentDashboard from './components/GovernmentDashboard';
 import CustomerDashboard from './components/CustomerDashboard';
@@ -15,15 +14,27 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import FeedbackPage from './pages/FeedbackPage';
 import ContactPage from './pages/ContactPage';
+import AuthPage from './pages/AuthPage';
 
 function AppRoutes() {
-  const { user } = useAuth();
+  const { user, profile, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/auth" element={<AuthPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/support" element={<SupportPage />} />
@@ -39,16 +50,16 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {user.role === 'shop-owner' && (
+      {profile?.role === 'property_owner' && (
         <>
           <Route path="/dashboard" element={<ShopOwnerDashboard />} />
           <Route path="/shop-profile" element={<ShopProfile />} />
         </>
       )}
-      {user.role === 'government' && (
+      {profile?.role === 'admin' && (
         <Route path="/dashboard" element={<GovernmentDashboard />} />
       )}
-      {user.role === 'customer' && (
+      {profile?.role === 'customer' && (
         <>
           <Route path="/dashboard" element={<CustomerDashboard />} />
           <Route path="/shop-profile" element={<ShopProfile />} />

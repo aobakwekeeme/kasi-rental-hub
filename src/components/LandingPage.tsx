@@ -6,7 +6,7 @@ import AuthModal from './AuthModal';
 export default function LandingPage() {
   const [showAuthModal, setShowAuthModal] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'signin' | 'signup'>('signin');
-  const [defaultRole, setDefaultRole] = React.useState<'customer' | 'shop_owner' | 'government_official'>('customer');
+  const [defaultRole, setDefaultRole] = React.useState<'customer' | 'property_owner'>('customer');
 
   const handleSignInClick = () => {
     setAuthMode('signin');
@@ -19,7 +19,7 @@ export default function LandingPage() {
     setShowAuthModal(true);
   };
 
-  const handleRoleSpecificRegister = (role: 'customer' | 'shop_owner' | 'government_official') => {
+  const handleRoleSpecificRegister = (role: 'customer' | 'property_owner') => {
     setDefaultRole(role);
     setAuthMode('signup');
     setShowAuthModal(true);
@@ -191,7 +191,7 @@ export default function LandingPage() {
                 performance, and access government oversight support.
               </p>
               <button
-                onClick={() => handleRoleSpecificRegister('shop_owner')}
+                onClick={() => handleRoleSpecificRegister('property_owner')}
                 className="bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Register as Shop
@@ -207,7 +207,7 @@ export default function LandingPage() {
                 and ensure fair ownership distribution across your jurisdiction.
               </p>
               <button
-                onClick={() => handleRoleSpecificRegister('government_official')}
+                onClick={() => handleRoleSpecificRegister('customer')}
                 className="bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
               >
                 Register as Government

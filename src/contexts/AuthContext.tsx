@@ -1,77 +1,130 @@
-import { createContext, useState, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode } from 'react';
+import { User, Session } from '@supabase/supabase-js';
+import { supabase } from '../integrations/supabase/client';
 
-interface User {
+interface Profile {
   id: string;
-  email: string;
-  name: string;
-  role: 'shop-owner' | 'government' | 'customer';
+  user_id: string;
+  full_name: string | null;
+  phone: string | null;
+  role: 'customer' | 'property_owner' | 'admin';
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  signIn: (email: string, password: string) => boolean;
-  signOut: () => void;
+  session: Session | null;
+  profile: Profile | null;
+  signIn: (email: string, password: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, userData: { full_name: string; role: string; phone?: string }) => Promise<{ error: any }>;
+  signOut: () => Promise<void>;
+  signInWithGoogle: () => Promise<{ error: any }>;
+  loading: boolean;
 }
 
-// Initialize context without a default value
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export { AuthContext };
 
-// Hardcoded users for demonstration
-const DEMO_USERS = [
-  {
-    id: '1',
-    email: 'mokoena@gmail.com',
-    password: 'Mokoena2025',
-    name: 'Billy Mokoena',
-    role: 'shop-owner' as const
-  },
-  {
-    id: '2',
-    email: 'masia@gmail.com',
-    password: 'Masia2025',
-    name: 'Tshimangadzo Masia',
-    role: 'government' as const
-  },
-  {
-    id: '3',
-    email: 'kamba@gmail.com',
-    password: 'Kamba2025',
-    name: 'Khanyisa Kamba',
-    role: 'customer' as const
-  }
-];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const signIn = (email: string, password: string): boolean => {
-    // Look for matching user in demo list
-    const foundUser = DEMO_USERS.find(
-      u => u.email === email && u.password === password
+  useEffect(() => {
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          // Fetch user profile
+          setTimeout(async () => {
+            try {
+              const { data: profileData } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('user_id', session.user.id)
+                .maybeSingle();
+              
+              setProfile(profileData as Profile);
+            } catch (error) {
+              console.error('Error fetching profile:', error);
+            }
+          }, 0);
+        } else {
+          setProfile(null);
+        }
+        
+        setLoading(false);
+      }
     );
 
-    if (foundUser) {
-      // Set authenticated user (excluding password)
-      setUser({
-        id: foundUser.id,
-        email: foundUser.email,
-        name: foundUser.name,
-        role: foundUser.role
-      });
-      return true;
-    }
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
 
-    return false;
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    return { error };
   };
 
-  const signOut = () => {
-    setUser(null); // Clear user state
+  const signUp = async (email: string, password: string, userData: { full_name: string; role: string; phone?: string }) => {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          full_name: userData.full_name,
+          role: userData.role,
+          phone: userData.phone
+        }
+      }
+    });
+    return { error };
+  };
+
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`
+      }
+    });
+    return { error };
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ user, signIn, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      profile, 
+      signIn, 
+      signUp, 
+      signOut, 
+      signInWithGoogle, 
+      loading 
+    }}>
       {children}
     </AuthContext.Provider>
   );
