@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import LandingPage from './components/LandingPage';
+import SignInPage from './components/SignInPage';
 import ShopOwnerDashboard from './components/ShopOwnerDashboard';
 import GovernmentDashboard from './components/GovernmentDashboard';
 import CustomerDashboard from './components/CustomerDashboard';
@@ -14,7 +15,6 @@ import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import FeedbackPage from './pages/FeedbackPage';
 import ContactPage from './pages/ContactPage';
-import AuthPage from './pages/AuthPage';
 
 function AppRoutes() {
   const { user, profile, loading } = useAuth();
@@ -34,7 +34,7 @@ function AppRoutes() {
     return (
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/auth" element={<AuthPage />} />
+        <Route path="/signin" element={<SignInPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/support" element={<SupportPage />} />
