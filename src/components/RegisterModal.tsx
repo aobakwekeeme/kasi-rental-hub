@@ -64,8 +64,8 @@ export default function RegisterModal({ onClose, onSuccess }: RegisterModalProps
 
   const roles = [
     { id: 'customer', title: 'Customer', description: 'Browse and review local shops' },
-    { id: 'property_owner', title: 'Shop Owner', description: 'Manage your shop and compliance' },
-    { id: 'admin', title: 'Government Official', description: 'Monitor and regulate shops' }
+    { id: 'shop_owner', title: 'Shop Owner', description: 'Manage your shop and compliance' },
+    { id: 'government_official', title: 'Government Official', description: 'Monitor and regulate shops' }
   ];
 
   return (
@@ -157,7 +157,7 @@ export default function RegisterModal({ onClose, onSuccess }: RegisterModalProps
             </div>
 
             {/* Role-specific fields */}
-            {selectedRole === 'property_owner' && (
+            {selectedRole === 'shop_owner' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Business Name *
@@ -173,7 +173,7 @@ export default function RegisterModal({ onClose, onSuccess }: RegisterModalProps
               </div>
             )}
 
-            {selectedRole === 'admin' && (
+            {selectedRole === 'government_official' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Department *

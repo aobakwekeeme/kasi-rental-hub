@@ -1,6 +1,8 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { Store, Shield, Users } from 'lucide-react';
+
+function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -291,3 +293,5 @@ import { Store, Shield, Users } from 'lucide-react';
     </div>
   );
 }
+
+export default LandingPage;

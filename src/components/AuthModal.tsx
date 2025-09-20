@@ -7,7 +7,7 @@ interface AuthModalProps {
   onClose: () => void;
   mode: 'signin' | 'signup';
   onModeChange: (mode: 'signin' | 'signup') => void;
-  defaultRole?: 'customer' | 'property_owner';
+  defaultRole?: 'customer' | 'shop_owner';
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({ 
@@ -219,7 +219,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
                 >
                   <option value="customer">Customer - Looking for rental properties</option>
-                  <option value="property_owner">Property Owner - List my rental properties</option>
+                  <option value="shop_owner">Shop Owner - List my rental properties</option>
                 </select>
               </div>
 

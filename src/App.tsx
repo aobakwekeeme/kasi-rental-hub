@@ -50,13 +50,13 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {profile?.role === 'property_owner' && (
+      {profile?.role === 'shop_owner' && (
         <>
           <Route path="/dashboard" element={<ShopOwnerDashboard />} />
           <Route path="/shop-profile" element={<ShopProfile />} />
         </>
       )}
-      {profile?.role === 'admin' && (
+      {profile?.role === 'government_official' && (
         <Route path="/dashboard" element={<GovernmentDashboard />} />
       )}
       {profile?.role === 'customer' && (
