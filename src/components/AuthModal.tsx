@@ -7,23 +7,20 @@ interface AuthModalProps {
   onClose: () => void;
   mode: 'signin' | 'signup';
   onModeChange: (mode: 'signin' | 'signup') => void;
-  defaultRole?: 'customer' | 'shop_owner';
+  defaultRole?: 'customer' | 'shop_owner' | 'government_official';
 }
 
-const AuthModal: React.FC<AuthModalProps> = ({ 
-  isOpen, 
-  onClose, 
-  mode, 
-  onModeChange, 
-  defaultRole = 'customer' 
-}) => {
+const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, mode, onModeChange, defaultRole = 'customer' }) => {
   const { signIn, signUp, signInWithGoogle, loading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     userType: defaultRole,
-    full_name: '',
+    name: '',
     phone: '',
+    address: '',
+    businessName: '',
+    department: ''
   });
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -46,20 +43,15 @@ const AuthModal: React.FC<AuthModalProps> = ({
           setError('Password must be at least 6 characters');
           return;
         }
-
-        if (!formData.full_name.trim()) {
-          setError('Full name is required');
-          return;
-        }
         
         const { error } = await signUp(formData.email, formData.password, {
-          full_name: formData.full_name,
-          role: formData.userType,
+          full_name: formData.name,
+          role: formData.userType as 'customer' | 'shop_owner' | 'government_official',
           phone: formData.phone
         });
 
         if (error) {
-          setError(error.message || 'An error occurred during registration');
+          setError(error.message || 'Registration failed');
         } else {
           setEmailConfirmationSent(true);
         }
@@ -88,14 +80,18 @@ const AuthModal: React.FC<AuthModalProps> = ({
       email: '',
       password: '',
       userType: defaultRole,
-      full_name: '',
+      name: '',
       phone: '',
+      address: '',
+      businessName: '',
+      department: ''
     });
     setError('');
     setShowPassword(false);
     setEmailConfirmationSent(false);
   };
 
+  // Update userType when defaultRole changes
   React.useEffect(() => {
     if (mode === 'signup') {
       setFormData(prev => ({ ...prev, userType: defaultRole }));
@@ -114,6 +110,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
   if (!isOpen) return null;
 
+  // Email confirmation screen
   if (emailConfirmationSent) {
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -174,16 +171,20 @@ const AuthModal: React.FC<AuthModalProps> = ({
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 rounded-t-2xl">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-teal-600 to-blue-600 p-6 rounded-t-2xl">
           <div className="flex justify-between items-center text-white">
             <div>
-              <h2 className="text-2xl font-bold">
-                {mode === 'signin' ? 'Welcome Back' : 'Join ModernKasi'}
-              </h2>
+              <div className="flex items-center space-x-2 mb-2">
+                <img src="/logo.png" alt="SSRMS Logo" className="w-10 h-10 rounded-lg" />
+                <h2 className="text-2xl font-bold">
+                  {mode === 'signin' ? 'Welcome Back' : 'Create Account'}
+                </h2>
+              </div>
               <p className="text-white/90 mt-1">
                 {mode === 'signin' 
-                  ? 'Sign in to your account' 
-                  : 'Create your account to get started'
+                  ? 'Sign in to access your dashboard' 
+                  : 'Join the Spaza Shop Registry community'
                 }
               </p>
             </div>
@@ -196,6 +197,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
           </div>
         </div>
 
+        {/* Form Content */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm flex items-start space-x-2">
@@ -205,55 +207,41 @@ const AuthModal: React.FC<AuthModalProps> = ({
           )}
 
           {mode === 'signup' && (
-            <>
-              <div>
-                <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-2">
-                  I am a *
-                </label>
-                <select
-                  id="userType"
-                  name="userType"
-                  value={formData.userType}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                >
-                  <option value="customer">Customer - Looking for rental properties</option>
-                  <option value="shop_owner">Shop Owner - List my rental properties</option>
-                </select>
-              </div>
+            <div>
+              <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-2">
+                I am a *
+              </label>
+              <select
+                id="userType"
+                name="userType"
+                value={formData.userType}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+              >
+                <option value="customer">Customer - Find and review spaza shops</option>
+                <option value="shop_owner">Shop Owner - Register and manage my spaza shop</option>
+                <option value="government_official">Government Official - Verify and monitor shops</option>
+              </select>
+            </div>
+          )}
 
-              <div>
-                <label htmlFor="full_name" className="block text-sm font-medium text-gray-700 mb-2">
-                  Full Name *
-                </label>
-                <input
-                  type="text"
-                  id="full_name"
-                  name="full_name"
-                  value={formData.full_name}
-                  onChange={handleInputChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="Enter your full name"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-                  placeholder="Enter your phone number"
-                />
-              </div>
-            </>
+          {mode === 'signup' && (
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                Full Name *
+              </label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                placeholder="Enter your full name"
+              />
+            </div>
           )}
 
           <div>
@@ -267,10 +255,82 @@ const AuthModal: React.FC<AuthModalProps> = ({
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
               placeholder="Enter your email address"
             />
           </div>
+
+          {mode === 'signup' && (
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number *
+              </label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                placeholder="Enter your phone number"
+              />
+            </div>
+          )}
+
+          {mode === 'signup' && (
+            <div>
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+                Address *
+              </label>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                placeholder="Enter your address"
+              />
+            </div>
+          )}
+
+          {mode === 'signup' && formData.userType === 'shop_owner' && (
+            <div>
+              <label htmlFor="businessName" className="block text-sm font-medium text-gray-700 mb-2">
+                Business Name *
+              </label>
+              <input
+                type="text"
+                id="businessName"
+                name="businessName"
+                value={formData.businessName}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                placeholder="Enter your business name"
+              />
+            </div>
+          )}
+
+          {mode === 'signup' && formData.userType === 'government_official' && (
+            <div>
+              <label htmlFor="department" className="block text-sm font-medium text-gray-700 mb-2">
+                Department *
+              </label>
+              <input
+                type="text"
+                id="department"
+                name="department"
+                value={formData.department}
+                onChange={handleInputChange}
+                required
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all"
+                placeholder="Enter your department"
+              />
+            </div>
+          )}
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
@@ -285,7 +345,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 onChange={handleInputChange}
                 required
                 minLength={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all pr-12"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all pr-12"
                 placeholder="Enter your password"
               />
               <button
@@ -304,7 +364,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 focus:ring-4 focus:ring-blue-200 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="w-full py-4 bg-gradient-to-r from-teal-600 to-blue-600 text-white rounded-lg hover:from-teal-700 hover:to-blue-700 focus:ring-4 focus:ring-teal-200 transition-all font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {loading ? (
               <div className="flex items-center justify-center">
@@ -344,7 +404,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
             <button
               type="button"
               onClick={() => handleModeChange(mode === 'signin' ? 'signup' : 'signin')}
-              className="text-blue-600 hover:text-blue-700 font-medium"
+              className="text-teal-600 hover:text-teal-700 font-medium"
             >
               {mode === 'signin' 
                 ? "Don't have an account? Sign up" 
@@ -357,6 +417,26 @@ const AuthModal: React.FC<AuthModalProps> = ({
             <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
               <p className="text-sm text-blue-800 font-medium mb-1">Email Confirmation Required</p>
               <p className="text-sm text-blue-700">After registration, you'll receive a confirmation email. Click the link to activate your account and sign in automatically.</p>
+            </div>
+          )}
+
+          {mode === 'signin' && (
+            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+              <h3 className="text-sm font-medium text-blue-900 mb-2">Demo Credentials:</h3>
+              <div className="space-y-2 text-xs text-blue-800">
+                <div className="border-b border-blue-200 pb-1">
+                  <div className="font-medium">Shop Owner</div>
+                  <div>demo-shop@example.com / password123</div>
+                </div>
+                <div className="border-b border-blue-200 pb-1">
+                  <div className="font-medium">Government Official</div>
+                  <div>demo-gov@example.com / password123</div>
+                </div>
+                <div>
+                  <div className="font-medium">Customer</div>
+                  <div>demo-customer@example.com / password123</div>
+                </div>
+              </div>
             </div>
           )}
         </form>
