@@ -189,6 +189,12 @@ const ShopOwnerDashboard: React.FC = () => {
                     Browse Shops
                   </Link>
                   <Link
+                    to="/profile"
+                    className="bg-gray-100 hover:bg-gray-200 px-4 py-3 rounded-lg text-center font-medium transition-colors"
+                  >
+                    Manage Profile
+                  </Link>
+                  <Link
                     to="/support"
                     className="bg-gray-100 hover:bg-gray-200 px-4 py-3 rounded-lg text-center font-medium transition-colors"
                   >
