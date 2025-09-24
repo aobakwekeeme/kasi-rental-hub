@@ -16,22 +16,32 @@ export default function CustomerDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-gradient-to-r from-primary to-primary/80 text-white px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div>
-            <Link to="/" className="flex items-center space-x-2 mb-2 hover:opacity-80 transition-opacity">
-              <img src="/logo.png" alt="SSRMS Logo" className="w-10 h-10 rounded-lg" />
-              <h1 className="text-2xl font-bold text-white">Customer Dashboard</h1>
+      <header className="customer-gradient text-white px-6 py-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
+        <div className="relative max-w-7xl mx-auto flex items-center justify-between">
+          <div className="animate-fade-in">
+            <Link to="/" className="flex items-center space-x-3 mb-3 hover:opacity-90 transition-all duration-300">
+              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                <img src="/logo.png" alt="SSRMS Logo" className="w-8 h-8 rounded-lg" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white tracking-tight">Customer Portal</h1>
+                <p className="text-xs text-white/80 font-medium">Spaza Shop Registry</p>
+              </div>
             </Link>
-            <p className="text-primary-foreground/80">Welcome back, {profile?.full_name || user?.email}</p>
+            <p className="text-white/90 font-medium">Welcome back, {profile?.full_name || user?.email}</p>
           </div>
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
+            <div className="hidden md:flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-sm">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span className="text-white/90 text-sm font-medium">Online</span>
+            </div>
             <button 
               onClick={signOut}
-              className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors"
+              className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-5 py-2.5 rounded-lg transition-all duration-300 backdrop-blur-sm border border-white/20"
             >
               <LogOut className="w-4 h-4" />
-              <span>Logout</span>
+              <span className="font-medium">Logout</span>
             </button>
           </div>
         </div>
@@ -39,57 +49,57 @@ export default function CustomerDashboard() {
 
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-card p-6 rounded-lg shadow-sm border">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
+          <div className="stat-card bg-gradient-to-br from-pink-50 to-rose-50 p-6 rounded-xl card-elevated border-0">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Favorited Shops</p>
-                <p className="text-3xl font-bold text-foreground">{favorites.length}</p>
+                <p className="text-sm font-semibold text-rose-600 uppercase tracking-wide">Favorited Shops</p>
+                <p className="text-3xl font-bold text-rose-700 mt-1">{favorites.length}</p>
               </div>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <Heart className="h-6 w-6 text-primary" />
+              <div className="w-14 h-14 bg-gradient-to-br from-rose-400 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                <Heart className="h-7 w-7 text-white" />
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">Your saved shops</p>
+            <p className="text-sm text-rose-600/80 mt-3 font-medium">Your saved shops</p>
           </div>
 
-          <div className="bg-card p-6 rounded-lg shadow-sm border">
+          <div className="stat-card bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl card-elevated border-0">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Nearby Shops</p>
-                <p className="text-3xl font-bold text-foreground">{nearbyShops.length}</p>
+                <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Nearby Shops</p>
+                <p className="text-3xl font-bold text-blue-700 mt-1">{nearbyShops.length}</p>
               </div>
-              <div className="w-12 h-12 bg-secondary/10 rounded-lg flex items-center justify-center">
-                <MapPin className="h-6 w-6 text-secondary" />
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                <MapPin className="h-7 w-7 text-white" />
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">In your area</p>
+            <p className="text-sm text-blue-600/80 mt-3 font-medium">In your area</p>
           </div>
 
-          <div className="bg-card p-6 rounded-lg shadow-sm border">
+          <div className="stat-card bg-gradient-to-br from-amber-50 to-yellow-50 p-6 rounded-xl card-elevated border-0">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Recent Activities</p>
-                <p className="text-3xl font-bold text-foreground">{activities.length}</p>
+                <p className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Recent Activities</p>
+                <p className="text-3xl font-bold text-amber-700 mt-1">{activities.length}</p>
               </div>
-              <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center">
-                <Clock className="h-6 w-6 text-accent" />
+              <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg">
+                <Clock className="h-7 w-7 text-white" />
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">Last 7 days</p>
+            <p className="text-sm text-amber-600/80 mt-3 font-medium">Last 7 days</p>
           </div>
 
-          <div className="bg-card p-6 rounded-lg shadow-sm border">
+          <div className="stat-card bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl card-elevated border-0">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Shops</p>
-                <p className="text-3xl font-bold text-foreground">{allShops.length}</p>
+                <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Total Shops</p>
+                <p className="text-3xl font-bold text-emerald-700 mt-1">{allShops.length}</p>
               </div>
-              <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                <ShoppingBag className="h-6 w-6 text-primary" />
+              <div className="w-14 h-14 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+                <ShoppingBag className="h-7 w-7 text-white" />
               </div>
             </div>
-            <p className="text-sm text-muted-foreground mt-2">Available in system</p>
+            <p className="text-sm text-emerald-600/80 mt-3 font-medium">Available in system</p>
           </div>
         </div>
 
@@ -97,31 +107,41 @@ export default function CustomerDashboard() {
           {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
             {/* Nearby Verified Shops */}
-            <div className="bg-card rounded-lg p-6 shadow-sm border">
+            <div className="bg-card rounded-xl p-6 card-elevated border-0">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Nearby Verified Shops</h3>
-                <Link to="/shops" className="text-primary hover:text-primary/80">View All</Link>
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 bg-customer-primary/10 rounded-lg flex items-center justify-center">
+                    <MapPin className="w-5 h-5 text-customer-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">Nearby Verified Shops</h3>
+                </div>
+                <Link to="/shops" className="bg-customer-primary text-white px-4 py-2 rounded-lg hover:bg-customer-primary/90 transition-colors font-medium text-sm">
+                  View All Shops
+                </Link>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {nearbyShops.slice(0, 4).map((shop) => (
-                  <div key={shop.id} className="border border-border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-foreground">{shop.name}</h4>
-                      <span className={`text-xs px-2 py-1 rounded ${
-                        shop.status === 'approved' ? 'bg-green-100 text-green-800' :
-                        shop.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
+                  <div key={shop.id} className="bg-gradient-to-br from-white to-gray-50/50 border border-gray-200/60 rounded-xl p-5 hover:shadow-lg transition-all duration-300 group">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-semibold text-gray-900 group-hover:text-customer-primary transition-colors">{shop.name}</h4>
+                      <span className={`text-xs px-3 py-1.5 rounded-full font-medium ${
+                        shop.status === 'approved' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' :
+                        shop.status === 'pending' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                        'bg-red-100 text-red-700 border border-red-200'
                       }`}>
                         {shop.status}
                       </span>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">{shop.address}</p>
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">{shop.address}</p>
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-1">
-                        <span className="text-sm font-medium">{shop.compliance_score || 0}/100</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-8 h-8 bg-customer-primary/10 rounded-lg flex items-center justify-center">
+                          <span className="text-xs font-bold text-customer-primary">{shop.compliance_score || 0}</span>
+                        </div>
+                        <span className="text-sm text-gray-500">/100</span>
                       </div>
-                      <Link to={`/shops/${shop.id}`} className="text-sm text-primary hover:text-primary/80">
+                      <Link to={`/shops/${shop.id}`} className="text-sm font-medium text-customer-primary hover:text-customer-primary/80 bg-customer-primary/5 hover:bg-customer-primary/10 px-3 py-1.5 rounded-lg transition-all">
                         View Details
                       </Link>
                     </div>
