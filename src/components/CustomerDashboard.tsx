@@ -141,7 +141,7 @@ export default function CustomerDashboard() {
                         </div>
                         <span className="text-sm text-gray-500">/100</span>
                       </div>
-                      <Link to={`/shops/${shop.id}`} className="text-sm font-medium text-customer-primary hover:text-customer-primary/80 bg-customer-primary/5 hover:bg-customer-primary/10 px-3 py-1.5 rounded-lg transition-all">
+                      <Link to={`/shop/${shop.id}`} className="text-sm font-medium text-customer-primary hover:text-customer-primary/80 bg-customer-primary/5 hover:bg-customer-primary/10 px-3 py-1.5 rounded-lg transition-all">
                         View Details
                       </Link>
                     </div>
@@ -194,7 +194,7 @@ export default function CustomerDashboard() {
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">{shop.address}</p>
                     <Link
-                      to={`/shops/${shop.id}`}
+                      to={`/shop/${shop.id}`}
                       className="text-sm text-primary hover:text-primary/80 w-full text-center block"
                     >
                       View Details
@@ -222,7 +222,7 @@ export default function CustomerDashboard() {
                     <p className="text-sm text-muted-foreground">{new Date(shop.created_at).toLocaleDateString()}</p>
                     <div className="flex items-center justify-between mt-3">
                       <p className="text-sm text-muted-foreground">{shop.categories?.[0] || 'General'}</p>
-                      <Link to={`/shops/${shop.id}`} className="text-sm text-primary hover:text-primary/80">
+                      <Link to={`/shop/${shop.id}`} className="text-sm text-primary hover:text-primary/80">
                         View
                       </Link>
                     </div>
@@ -238,9 +238,9 @@ export default function CustomerDashboard() {
                 <Link to="/shops" className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
                   Search Shops
                 </Link>
-                <button className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
+                <Link to="/my-reviews" className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
                   My Reviews
-                </button>
+                </Link>
                 <Link to="/feedback" className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
                   Report Issue
                 </Link>

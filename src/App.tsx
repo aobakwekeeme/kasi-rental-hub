@@ -20,6 +20,8 @@ import ShopBrowsePage from './pages/ShopBrowsePage';
 import ShopManagementPage from './pages/ShopManagementPage';
 import InspectionManagementPage from './pages/InspectionManagementPage';
 import ReviewsPage from './pages/ReviewsPage';
+import ShopDetailPage from './pages/ShopDetailPage';
+import MyReviewsPage from './pages/MyReviewsPage';
 import ShopRegistrationForm from './components/ShopRegistrationForm';
 import ProfileManagement from './components/ProfileManagement';
 
@@ -77,7 +79,9 @@ function AppRoutes() {
           <Route path="/dashboard" element={<CustomerDashboard />} />
           <Route path="/shop-profile" element={<ShopProfile />} />
           <Route path="/shops" element={<ShopBrowsePage />} />
+          <Route path="/shop/:shopId" element={<ShopDetailPage />} />
           <Route path="/shop/:shopId/reviews" element={<ReviewsPage />} />
+          <Route path="/my-reviews" element={<MyReviewsPage />} />
         </>
       )}
       <Route path="/profile" element={<ProfileManagement />} />
