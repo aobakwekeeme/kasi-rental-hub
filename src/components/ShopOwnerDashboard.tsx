@@ -52,7 +52,7 @@ const ShopOwnerDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Dashboard Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
-          <div className="stat-card bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/shop/manage" className="stat-card bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Compliance Score</p>
@@ -66,9 +66,9 @@ const ShopOwnerDashboard: React.FC = () => {
                 <CheckCircle className="w-7 h-7 text-white" />
               </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/documents" className="stat-card bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Documents</p>
@@ -82,9 +82,9 @@ const ShopOwnerDashboard: React.FC = () => {
                 <FileText className="w-7 h-7 text-white" />
               </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-gradient-to-br from-orange-50 to-red-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/inspections" className="stat-card bg-gradient-to-br from-orange-50 to-red-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-orange-600 uppercase tracking-wide">Inspections</p>
@@ -98,9 +98,9 @@ const ShopOwnerDashboard: React.FC = () => {
                 <Calendar className="w-7 h-7 text-white" />
               </div>
             </div>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/activities" className="stat-card bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-purple-600 uppercase tracking-wide">Activities</p>
@@ -114,7 +114,7 @@ const ShopOwnerDashboard: React.FC = () => {
                 <Bell className="w-7 h-7 text-white" />
               </div>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Main Content */}

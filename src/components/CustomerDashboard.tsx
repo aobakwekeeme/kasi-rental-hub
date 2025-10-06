@@ -50,7 +50,7 @@ export default function CustomerDashboard() {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
-          <div className="stat-card bg-gradient-to-br from-pink-50 to-rose-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/shops" className="stat-card bg-gradient-to-br from-pink-50 to-rose-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-rose-600 uppercase tracking-wide">Favorited Shops</p>
@@ -61,9 +61,9 @@ export default function CustomerDashboard() {
               </div>
             </div>
             <p className="text-sm text-rose-600/80 mt-3 font-medium">Your saved shops</p>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/shops" className="stat-card bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Nearby Shops</p>
@@ -74,9 +74,9 @@ export default function CustomerDashboard() {
               </div>
             </div>
             <p className="text-sm text-blue-600/80 mt-3 font-medium">In your area</p>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-gradient-to-br from-amber-50 to-yellow-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/activities" className="stat-card bg-gradient-to-br from-amber-50 to-yellow-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-amber-600 uppercase tracking-wide">Recent Activities</p>
@@ -87,9 +87,9 @@ export default function CustomerDashboard() {
               </div>
             </div>
             <p className="text-sm text-amber-600/80 mt-3 font-medium">Last 7 days</p>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl card-elevated border-0">
+          <Link to="/shops" className="stat-card bg-gradient-to-br from-emerald-50 to-teal-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Total Shops</p>
@@ -100,7 +100,7 @@ export default function CustomerDashboard() {
               </div>
             </div>
             <p className="text-sm text-emerald-600/80 mt-3 font-medium">Available in system</p>
-          </div>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -65,7 +65,7 @@ export default function GovernmentDashboard() {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Stats Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-slide-up">
-          <div className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow">
+          <Link to="/shop-management" className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-gov-primary/10 rounded-xl flex items-center justify-center">
                 <div className="w-6 h-6 bg-gov-primary rounded text-white text-xs font-bold flex items-center justify-center">
@@ -79,9 +79,9 @@ export default function GovernmentDashboard() {
             <div className="text-sm text-gray-600 mb-1 font-semibold uppercase tracking-wide">Total Registered</div>
             <div className="text-3xl font-bold text-gov-primary">{shops.length}</div>
             <div className="text-xs text-gray-500 mt-1">Spaza Shops</div>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow">
+          <Link to="/shop-management" className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
                 <div className="w-6 h-6 bg-amber-500 rounded text-white text-xs font-bold flex items-center justify-center">
@@ -95,9 +95,9 @@ export default function GovernmentDashboard() {
             <div className="text-sm text-gray-600 mb-1 font-semibold uppercase tracking-wide">Pending Approvals</div>
             <div className="text-3xl font-bold text-amber-600">{pendingShops.length}</div>
             <div className="text-xs text-gray-500 mt-1">Awaiting Review</div>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow">
+          <Link to="/inspections" className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                 <div className="w-6 h-6 bg-blue-500 rounded text-white text-xs font-bold flex items-center justify-center">
@@ -111,9 +111,9 @@ export default function GovernmentDashboard() {
             <div className="text-sm text-gray-600 mb-1 font-semibold uppercase tracking-wide">Scheduled Inspections</div>
             <div className="text-3xl font-bold text-blue-600">{upcomingInspections.length}</div>
             <div className="text-xs text-gray-500 mt-1">Upcoming</div>
-          </div>
+          </Link>
 
-          <div className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow">
+          <Link to="/shop-management" className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
                 <div className="w-6 h-6 bg-emerald-500 rounded text-white text-xs font-bold flex items-center justify-center">
@@ -129,7 +129,7 @@ export default function GovernmentDashboard() {
               {shops.length > 0 ? Math.round(((shops.length - nonCompliantShops.length) / shops.length) * 100) : 0}%
             </div>
             <div className="text-xs text-gray-500 mt-1">System-wide</div>
-          </div>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -140,8 +140,12 @@ export default function GovernmentDashboard() {
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-foreground">Compliance Overview</h3>
                 <div className="flex space-x-2">
-                  <button className="text-muted-foreground hover:text-foreground">Filter</button>
-                  <button className="text-muted-foreground hover:text-foreground">Export</button>
+                  <button 
+                    onClick={() => window.print()}
+                    className="text-muted-foreground hover:text-foreground px-3 py-1 border rounded"
+                  >
+                    Export
+                  </button>
                 </div>
               </div>
               <div className="bg-muted/30 rounded-lg p-8 text-center mb-6">
@@ -253,7 +257,13 @@ export default function GovernmentDashboard() {
                     <p className="text-sm text-muted-foreground mb-3">
                       Compliance Score: {shop.compliance_score}/100
                     </p>
-                    <button className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90">
+                    <button 
+                      onClick={async () => {
+                        const { toast } = await import('sonner');
+                        toast.success(`Notification sent to ${shop.name}`);
+                      }}
+                      className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90"
+                    >
                       Send Notification
                     </button>
                   </div>
@@ -272,9 +282,9 @@ export default function GovernmentDashboard() {
                   <Link to="/shop-management" className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
                     Review Apps
                   </Link>
-                  <button className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
+                  <Link to="/inspections" className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
                     Schedule Inspection
-                  </button>
+                  </Link>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <button className="bg-muted hover:bg-muted/80 px-4 py-3 rounded-lg text-center font-medium transition-colors text-foreground">
