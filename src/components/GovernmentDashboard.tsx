@@ -4,6 +4,8 @@ import { useShops } from '../hooks/useShops';
 import { useInspections } from '../hooks/useInspections';
 import { useDocuments } from '../hooks/useDocuments';
 import { LogOut } from 'lucide-react';
+import { supabase } from '../integrations/supabase/client';
+import { toast } from 'sonner';
 
 export default function GovernmentDashboard() {
   const { user, profile, signOut } = useAuth();
@@ -81,7 +83,7 @@ export default function GovernmentDashboard() {
             <div className="text-xs text-gray-500 mt-1">Spaza Shops</div>
           </Link>
 
-          <Link to="/shop-management" className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow hover:shadow-lg transition-all cursor-pointer">
+          <Link to="/shop-management?status=pending" className="stat-card bg-white border border-gray-200/60 rounded-xl p-6 gov-shadow hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between mb-4">
               <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
                 <div className="w-6 h-6 bg-amber-500 rounded text-white text-xs font-bold flex items-center justify-center">
@@ -257,15 +259,30 @@ export default function GovernmentDashboard() {
                     <p className="text-sm text-muted-foreground mb-3">
                       Compliance Score: {shop.compliance_score}/100
                     </p>
-                    <button 
-                      onClick={async () => {
-                        const { toast } = await import('sonner');
-                        toast.success(`Notification sent to ${shop.name}`);
-                      }}
-                      className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90"
-                    >
-                      Send Notification
-                    </button>
+                      <button 
+                        onClick={async () => {
+                          toast.success(`Notification sent to ${shop.name}`);
+                        }}
+                        className="text-sm bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90"
+                      >
+                        Send Notification
+                      </button>
+                      <button
+                        onClick={async () => {
+                          const { error } = await supabase
+                            .from('shops')
+                            .update({ status: 'suspended' })
+                            .eq('id', shop.id);
+                          if (error) {
+                            toast.error('Failed to suspend shop');
+                          } else {
+                            toast.success('Shop suspended');
+                          }
+                        }}
+                        className="text-sm bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                      >
+                        Suspend Shop
+                      </button>
                   </div>
                 ))}
                 {nonCompliantShops.length === 0 && (

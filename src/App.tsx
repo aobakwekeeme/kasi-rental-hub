@@ -66,7 +66,7 @@ function AppRoutes() {
         <>
           <Route path="/dashboard" element={<ShopOwnerDashboard />} />
           <Route path="/shop-profile" element={<ShopProfile />} />
-          <Route path="/shop/manage" element={<ShopManagementPage />} />
+          <Route path="/shop/manage" element={<ShopProfile />} />
           <Route path="/shop/register" element={<ShopRegistrationForm />} />
           <Route path="/documents" element={<DocumentsPage />} />
           <Route path="/inspections" element={<InspectionsPage />} />
@@ -100,6 +100,7 @@ function AppRoutes() {
       <Route path="/terms-of-service" element={<TermsOfServicePage />} />
       <Route path="/feedback" element={<FeedbackPage />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/shops" element={<ShopBrowsePage />} />
       <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );

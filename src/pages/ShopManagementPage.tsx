@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Check, X, Eye, FileText } from 'lucide-react';
 import { useShops } from '../hooks/useShops';
 import { useDocuments } from '../hooks/useDocuments';
@@ -10,7 +10,8 @@ export default function ShopManagementPage() {
   const { shops, refetch } = useShops();
   const { documents } = useDocuments();
   const [selectedShop, setSelectedShop] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [searchParams] = useSearchParams();
+  const [filterStatus, setFilterStatus] = useState<string>(searchParams.get('status') || 'all');
 
   const filteredShops = filterStatus === 'all' 
     ? shops 

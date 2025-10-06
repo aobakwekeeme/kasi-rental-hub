@@ -52,7 +52,7 @@ const ShopOwnerDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Dashboard Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
-          <Link to="/shop/manage" className="stat-card bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
+          <Link to="/compliance" className="stat-card bg-gradient-to-br from-emerald-50 to-green-50 p-6 rounded-xl card-elevated border-0 hover:shadow-lg transition-all cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Compliance Score</p>
