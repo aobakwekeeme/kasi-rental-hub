@@ -1,51 +1,83 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LogOut, FileText, Calendar, Bell, TrendingUp, CheckCircle, Plus } from 'lucide-react';
+import { LogOut, FileText, Calendar, Bell, TrendingUp, CheckCircle, Plus, Home, Store, ClipboardCheck, Activity, HelpCircle, Settings } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { useUserShop } from '../hooks/useShops';
 import { useShopInspections } from '../hooks/useInspections';
 import { useShopDocuments } from '../hooks/useDocuments';
 import { useActivities } from '../hooks/useActivities';
+import { supabase } from '../integrations/supabase/client';
+import { toast } from 'sonner';
 
 const ShopOwnerDashboard: React.FC = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile } = useAuth();
   const { shop, loading: shopLoading } = useUserShop();
   const { inspections } = useShopInspections(shop?.id || '');
   const { documents } = useShopDocuments(shop?.id || '');
   const { activities } = useActivities(5);
 
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      toast.error('Failed to sign out');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="shop-gradient text-white px-6 py-6 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-400 to-teal-400"></div>
-        <div className="relative max-w-7xl mx-auto flex items-center justify-between">
-          <div className="animate-fade-in">
-            <Link to="/" className="flex items-center space-x-3 mb-3 hover:opacity-90 transition-all duration-300">
-              <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/30">
-                <img src="/logo.png" alt="SSRMS Logo" className="w-8 h-8 rounded-lg" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight">Shop Owner Portal</h1>
-                <p className="text-xs text-white/80 font-medium">Business Management Hub</p>
-              </div>
+      {/* Header with Navigation */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4 border-b">
+            <Link to="/" className="flex items-center space-x-2">
+              <img src="/logo.png" alt="SSRMS Logo" className="w-8 h-8 rounded-lg" />
+              <h1 className="text-2xl font-bold text-gray-900">Shop Owner Portal</h1>
             </Link>
-            <p className="text-white/90 font-medium">Welcome back, {profile?.full_name || user?.email}</p>
+            <p className="text-gray-600">Welcome, {profile?.full_name || user?.email}</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="hidden md:flex items-center space-x-2 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/20">
-              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-              <span className="text-white/90 text-sm font-medium">Business Active</span>
+          <nav className="flex items-center justify-between py-3">
+            <div className="flex gap-6">
+              <Link to="/dashboard" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <Home className="w-4 h-4" />
+                <span className="text-sm font-medium">Home</span>
+              </Link>
+              <Link to="/shop/manage" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <Store className="w-4 h-4" />
+                <span className="text-sm font-medium">My Shop</span>
+              </Link>
+              <Link to="/documents" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <FileText className="w-4 h-4" />
+                <span className="text-sm font-medium">Documents</span>
+              </Link>
+              <Link to="/inspections" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <ClipboardCheck className="w-4 h-4" />
+                <span className="text-sm font-medium">Inspections</span>
+              </Link>
+              <Link to="/activities" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <Activity className="w-4 h-4" />
+                <span className="text-sm font-medium">Activities</span>
+              </Link>
+              <Link to="/support" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <HelpCircle className="w-4 h-4" />
+                <span className="text-sm font-medium">Support</span>
+              </Link>
             </div>
-            <button 
-              onClick={signOut}
-              className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-5 py-2.5 rounded-lg transition-all duration-300 backdrop-blur-sm border border-white/20 font-medium"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
-          </div>
+            <div className="flex items-center gap-4">
+              <Link to="/profile" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <Settings className="w-4 h-4" />
+                <span className="text-sm font-medium">Profile</span>
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            </div>
+          </nav>
         </div>
       </header>
 

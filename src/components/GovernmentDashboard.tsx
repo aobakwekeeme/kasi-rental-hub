@@ -3,15 +3,24 @@ import { useAuth } from '../hooks/useAuth';
 import { useShops } from '../hooks/useShops';
 import { useInspections } from '../hooks/useInspections';
 import { useDocuments } from '../hooks/useDocuments';
-import { LogOut } from 'lucide-react';
+import { LogOut, Home, Store, ClipboardCheck, HelpCircle, Settings } from 'lucide-react';
 import { supabase } from '../integrations/supabase/client';
 import { toast } from 'sonner';
 
 export default function GovernmentDashboard() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile } = useAuth();
   const { shops } = useShops();
   const { inspections } = useInspections();
   const { documents } = useDocuments();
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    } catch (error) {
+      toast.error('Failed to sign out');
+    }
+  };
 
   const pendingShops = shops.filter(shop => shop.status === 'pending');
   const approvedShops = shops.filter(shop => shop.status === 'approved');
@@ -31,36 +40,49 @@ export default function GovernmentDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="gov-gradient text-white px-6 py-6 relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-transparent"></div>
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-red-500 to-green-500"></div>
-        <div className="relative max-w-7xl mx-auto flex items-center justify-between">
-          <div className="animate-fade-in">
-            <Link to="/" className="flex items-center space-x-4 mb-3 hover:opacity-90 transition-all duration-300">
-              <div className="w-14 h-14 bg-white/15 rounded-lg flex items-center justify-center backdrop-blur-sm border border-white/20">
-                <img src="/logo.png" alt="SSRMS Logo" className="w-10 h-10 rounded-lg" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white tracking-tight">Government Dashboard</h1>
-                <p className="text-xs text-white/80 font-medium uppercase tracking-wider">Official Portal • SSRMS</p>
-              </div>
+      {/* Header with Navigation */}
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4 border-b">
+            <Link to="/" className="flex items-center space-x-2">
+              <img src="/logo.png" alt="SSRMS Logo" className="w-8 h-8 rounded-lg" />
+              <h1 className="text-2xl font-bold text-gray-900">Government Dashboard</h1>
             </Link>
-            <p className="text-white/90 font-medium">Welcome back, {profile?.full_name || user?.email}</p>
+            <p className="text-gray-600">Welcome, {profile?.full_name || user?.email}</p>
           </div>
-          <div className="flex items-center space-x-4">
-            <div className="hidden md:flex items-center space-x-3 bg-white/10 px-4 py-2 rounded-lg backdrop-blur-sm border border-white/20">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-white/90 text-sm font-medium">System Active</span>
+          <nav className="flex items-center justify-between py-3">
+            <div className="flex gap-6">
+              <Link to="/dashboard" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <Home className="w-4 h-4" />
+                <span className="text-sm font-medium">Home</span>
+              </Link>
+              <Link to="/shop-management" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <Store className="w-4 h-4" />
+                <span className="text-sm font-medium">Shop Management</span>
+              </Link>
+              <Link to="/inspections" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <ClipboardCheck className="w-4 h-4" />
+                <span className="text-sm font-medium">Inspections</span>
+              </Link>
+              <Link to="/support" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <HelpCircle className="w-4 h-4" />
+                <span className="text-sm font-medium">Support</span>
+              </Link>
             </div>
-            <button 
-              onClick={signOut}
-              className="flex items-center space-x-2 bg-white/20 hover:bg-white/30 text-white px-5 py-2.5 rounded-lg transition-all duration-300 backdrop-blur-sm border border-white/20 font-medium"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Secure Logout</span>
-            </button>
-          </div>
+            <div className="flex items-center gap-4">
+              <Link to="/profile" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
+                <Settings className="w-4 h-4" />
+                <span className="text-sm font-medium">Profile</span>
+              </Link>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            </div>
+          </nav>
         </div>
       </header>
 

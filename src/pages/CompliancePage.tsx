@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
 import { useUserShop } from '../hooks/useShops';
 import { useShopDocuments } from '../hooks/useDocuments';
 import { useShopInspections } from '../hooks/useInspections';
@@ -9,7 +8,6 @@ import { ArrowLeft, Shield, CheckCircle, FileText, Building, Phone, Mail } from 
 
 const CompliancePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const { profile } = useAuth();
   const { shop } = useUserShop();
   const { documents } = useShopDocuments(shop?.id || '');
   const { inspections } = useShopInspections(shop?.id || '');
