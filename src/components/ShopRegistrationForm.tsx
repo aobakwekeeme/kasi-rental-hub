@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import { supabase } from '../integrations/supabase/client';
 import { toast } from 'sonner';
 import { ArrowLeft, MapPin, Clock, DollarSign, FileText, Building2 } from 'lucide-react';
+import { validateEmail, validatePhone, validateText } from '../utils/inputValidation';
 
 const BUSINESS_TYPES = [
   'Spaza Shop', 'General Store', 'Grocery Store', 'Convenience Store',
@@ -75,6 +76,25 @@ const ShopRegistrationForm: React.FC = () => {
 
   const handleSubmit = async () => {
     if (!user) return;
+
+    // Validate inputs
+    const nameValidation = validateText(basicInfo.name, 'Business name', 3, 200);
+    if (!nameValidation.isValid) {
+      toast.error(nameValidation.error);
+      return;
+    }
+
+    const emailValidation = validateEmail(contactInfo.email);
+    if (!emailValidation.isValid) {
+      toast.error(emailValidation.error);
+      return;
+    }
+
+    const phoneValidation = validatePhone(contactInfo.phone);
+    if (!phoneValidation.isValid) {
+      toast.error(phoneValidation.error);
+      return;
+    }
 
     try {
       setLoading(true);
