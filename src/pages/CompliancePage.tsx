@@ -5,9 +5,11 @@ import { useShopInspections } from '../hooks/useInspections';
 import { supabase } from '../integrations/supabase/client';
 import { toast } from 'sonner';
 import { ArrowLeft, Shield, CheckCircle, FileText, Building, Phone, Mail } from 'lucide-react';
+import ComplianceQuestionnaire from '../components/ComplianceQuestionnaire';
 
 const CompliancePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const { shop } = useUserShop();
   const { documents } = useShopDocuments(shop?.id || '');
   const { inspections } = useShopInspections(shop?.id || '');
@@ -425,11 +427,28 @@ const CompliancePage: React.FC = () => {
           <p className="text-teal-100 mb-6 max-w-2xl mx-auto">
             Start your compliance journey today and join thousands of verified spaza shops across South Africa.
           </p>
-          <button onClick={recalcCompliance} className="bg-white text-teal-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-            Recalculate Compliance Score
-          </button>
+          <div className="flex items-center justify-center space-x-4">
+            <button 
+              onClick={() => setShowQuestionnaire(true)} 
+              className="bg-white text-teal-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+            >
+              Start Compliance Questionnaire
+            </button>
+            <button 
+              onClick={recalcCompliance} 
+              className="bg-teal-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-teal-800 transition-colors border border-white/20"
+            >
+              Recalculate Score
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Questionnaire Modal */}
+      <ComplianceQuestionnaire 
+        isOpen={showQuestionnaire} 
+        onClose={() => setShowQuestionnaire(false)} 
+      />
     </div>
   );
 };

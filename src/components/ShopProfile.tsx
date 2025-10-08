@@ -1,12 +1,48 @@
 import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
-import { ArrowLeft, Share, MoreHorizontal, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { ArrowLeft, Share, MoreHorizontal, MapPin, Phone, Mail, Clock, Store } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useUserShop } from '../hooks/useShops';
+import { useShopDocuments } from '../hooks/useDocuments';
 
 export default function ShopProfile() {
-  const { user } = useAuth();
+  const { profile } = useAuth();
   const navigate = useNavigate();
+  const { shop, loading } = useUserShop();
+  const { documents } = useShopDocuments(shop?.id || '');
   const [activeTab, setActiveTab] = useState('Overview');
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading shop profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!shop) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <Store className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">No Shop Found</h2>
+          <p className="text-gray-600 mb-6">You haven't registered a shop yet.</p>
+          <button
+            onClick={() => navigate('/shop/register')}
+            className="bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700"
+          >
+            Register Your Shop
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const approvedDocs = documents.filter(d => d.status === 'approved').length;
+  const totalRequiredDocs = 7; // Based on compliance requirements
 
   const tabs = ['Overview', 'Documents', 'Compliance', 'History', 'Reviews'];
 
@@ -44,26 +80,45 @@ export default function ShopProfile() {
         <div className="relative px-6 pb-6">
           <div className="max-w-6xl mx-auto">
             {/* Shop Logo */}
-            <div className="absolute -top-20 left-0 w-24 h-24 bg-white rounded-lg border-4 border-white shadow-sm"></div>
+            <div className="absolute -top-20 left-0 w-24 h-24 bg-white rounded-lg border-4 border-white shadow-sm flex items-center justify-center">
+              {shop.logo_url ? (
+                <img src={shop.logo_url} alt={shop.name} className="w-full h-full object-cover rounded-lg" />
+              ) : (
+                <span className="text-3xl font-bold text-gray-600">{shop.name?.charAt(0) || 'S'}</span>
+              )}
+            </div>
             
             {/* Shop Info */}
             <div className="pt-8 pb-6">
               <div className="flex items-start justify-between">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 mb-2">Mokoena's Community Store</h1>
-                  <p className="text-gray-600 mb-3">Spaza Shop • Established 2023</p>
+                  <h1 className="text-3xl font-bold text-gray-900 mb-2">{shop.name}</h1>
+                  <p className="text-gray-600 mb-3">
+                    {shop.business_type || 'Spaza Shop'} • Established {new Date(shop.created_at).getFullYear()}
+                  </p>
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-1">
-                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                      <span className="text-green-600 font-medium">Verified</span>
+                      <div className={`w-2 h-2 rounded-full ${
+                        shop.status === 'approved' ? 'bg-green-500' : 
+                        shop.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                      }`}></div>
+                      <span className={`font-medium ${
+                        shop.status === 'approved' ? 'text-green-600' : 
+                        shop.status === 'pending' ? 'text-yellow-600' : 'text-red-600'
+                      }`}>
+                        {shop.status === 'approved' ? 'Verified' : shop.status}
+                      </span>
                     </div>
-                    <span className="text-blue-600 font-medium">85% Compliance</span>
+                    <span className="text-blue-600 font-medium">{shop.compliance_score || 0}% Compliance</span>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  {user?.role === 'shop-owner' && (
-                    <button className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
-                      Edit Profile
+                  {profile?.role === 'shop_owner' && (
+                    <button 
+                      onClick={() => navigate('/documents')}
+                      className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                    >
+                      Manage Documents
                     </button>
                   )}
                   <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-lg font-medium transition-colors">
@@ -110,43 +165,54 @@ export default function ShopProfile() {
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h3 className="text-xl font-semibold mb-4">About</h3>
               <p className="text-gray-600 mb-6">
-                Mokoena's Community Store is a registered spaza shop serving the local community 
+                {shop.description || `${shop.name} is a registered spaza shop serving the local community 
                 with essential groceries, household items, and fresh produce. We are committed 
                 to maintaining high food safety standards and providing quality products at 
-                affordable prices to support our neighborhood.
+                affordable prices to support our neighborhood.`}
               </p>
               
               <div className="grid grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-medium text-gray-900 mb-1">Business Type</h4>
-                  <p className="text-gray-600">Convenience Store</p>
+                  <p className="text-gray-600">{shop.business_type || 'Not specified'}</p>
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900 mb-1">Registration No.</h4>
-                  <p className="text-gray-600">SSRMS-2023-001234</p>
+                  <p className="text-gray-600">{shop.business_registration_number || 'Pending'}</p>
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900 mb-1">Established</h4>
-                  <p className="text-gray-600">January 2023</p>
+                  <p className="text-gray-600">{new Date(shop.created_at).toLocaleDateString('en-ZA', { year: 'numeric', month: 'long' })}</p>
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-1">Owner</h4>
-                  <p className="text-gray-600">Billy Mokoena</p>
+                  <h4 className="font-medium text-gray-900 mb-1">District</h4>
+                  <p className="text-gray-600">{(shop as any).district_municipality || 'Not specified'}</p>
                 </div>
               </div>
             </div>
 
             {/* Products & Services */}
             <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="text-xl font-semibold mb-6">Available Products</h3>
+              <h3 className="text-xl font-semibold mb-6">Product Categories</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {productCategories.map((category, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4 text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg mx-auto mb-3"></div>
-                    <h4 className="font-medium text-gray-900 mb-1">{category.name}</h4>
-                    <p className="text-sm text-gray-600">{category.items} Items</p>
-                  </div>
-                ))}
+                {shop.categories && shop.categories.length > 0 ? (
+                  shop.categories.map((category, index) => (
+                    <div key={index} className="border border-gray-200 rounded-lg p-4 text-center">
+                      <div className="w-16 h-16 bg-gray-100 rounded-lg mx-auto mb-3 flex items-center justify-center">
+                        <span className="text-2xl">{['🥬', '🥚', '🍞', '🏠', '🥤', '🍫'][index % 6]}</span>
+                      </div>
+                      <h4 className="font-medium text-gray-900 mb-1">{category}</h4>
+                    </div>
+                  ))
+                ) : (
+                  productCategories.map((category, index) => (
+                    <div key={index} className="border border-gray-200 rounded-lg p-4 text-center">
+                      <div className="w-16 h-16 bg-gray-100 rounded-lg mx-auto mb-3"></div>
+                      <h4 className="font-medium text-gray-900 mb-1">{category.name}</h4>
+                      <p className="text-sm text-gray-600">{category.items} Items</p>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -162,32 +228,44 @@ export default function ShopProfile() {
                   <MapPin className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
                     <p className="font-medium text-gray-900">Address</p>
-                    <p className="text-gray-600">45 Nelson Mandela Dr, Mthatha, 1804</p>
+                    <p className="text-gray-600">{shop.address}</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-3">
-                  <Phone className="w-5 h-5 text-gray-400 mt-1" />
-                  <div>
-                    <p className="font-medium text-gray-900">Phone</p>
-                    <p className="text-gray-600">+27 11 936 7890</p>
+                {shop.phone && (
+                  <div className="flex items-start space-x-3">
+                    <Phone className="w-5 h-5 text-gray-400 mt-1" />
+                    <div>
+                      <p className="font-medium text-gray-900">Phone</p>
+                      <p className="text-gray-600">{shop.phone}</p>
+                    </div>
                   </div>
-                </div>
+                )}
                 
-                <div className="flex items-start space-x-3">
-                  <Mail className="w-5 h-5 text-gray-400 mt-1" />
-                  <div>
-                    <p className="font-medium text-gray-900">Email</p>
-                    <p className="text-gray-600">mokoena@gmail.com</p>
+                {shop.email && (
+                  <div className="flex items-start space-x-3">
+                    <Mail className="w-5 h-5 text-gray-400 mt-1" />
+                    <div>
+                      <p className="font-medium text-gray-900">Email</p>
+                      <p className="text-gray-600">{shop.email}</p>
+                    </div>
                   </div>
-                </div>
+                )}
                 
                 <div className="flex items-start space-x-3">
                   <Clock className="w-5 h-5 text-gray-400 mt-1" />
                   <div>
                     <p className="font-medium text-gray-900">Trading Hours</p>
-                    <p className="text-gray-600">Mon-Fri: 7AM - 7PM</p>
-                    <p className="text-gray-600">Sat-Sun: 8AM - 5PM</p>
+                    {shop.trading_hours ? (
+                      <div className="text-gray-600">
+                        {JSON.stringify(shop.trading_hours)}
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-gray-600">Mon-Fri: 7AM - 7PM</p>
+                        <p className="text-gray-600">Sat-Sun: 8AM - 5PM</p>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -228,14 +306,20 @@ export default function ShopProfile() {
                       stroke="currentColor"
                       strokeWidth="8"
                       fill="transparent"
-                      strokeDasharray={`${85 * 2.51} ${100 * 2.51}`}
-                      className="text-green-500"
+                      strokeDasharray={`${(shop.compliance_score || 0) * 2.51} ${100 * 2.51}`}
+                      className={`${
+                        (shop.compliance_score || 0) >= 70 ? 'text-green-500' : 
+                        (shop.compliance_score || 0) >= 40 ? 'text-yellow-500' : 'text-red-500'
+                      }`}
                     />
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-gray-900">85%</span>
+                    <span className="text-2xl font-bold text-gray-900">{shop.compliance_score || 0}%</span>
                   </div>
                 </div>
+                <p className="text-sm text-gray-600">
+                  {approvedDocs} of {totalRequiredDocs} documents approved
+                </p>
               </div>
               
               {/* Individual Compliance Items */}

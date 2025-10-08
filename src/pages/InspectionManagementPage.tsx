@@ -35,6 +35,16 @@ export default function InspectionManagementPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      if (!formData.shop_id) {
+        toast.error('Please select a shop');
+        return;
+      }
+      
+      if (!formData.scheduled_date) {
+        toast.error('Please select a date and time');
+        return;
+      }
+
       const { error } = await supabase
         .from('inspections')
         .insert({
@@ -46,13 +56,18 @@ export default function InspectionManagementPage() {
           status: 'scheduled'
         });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Inspection creation error:', error);
+        throw error;
+      }
+      
       toast.success('Inspection scheduled successfully');
       setShowCreateModal(false);
       setFormData({ shop_id: '', type: 'routine', scheduled_date: '', notes: '' });
       refetch();
-    } catch (error) {
-      toast.error('Failed to schedule inspection');
+    } catch (error: any) {
+      console.error('Failed to schedule inspection:', error);
+      toast.error(error?.message || 'Failed to schedule inspection');
     }
   };
 
