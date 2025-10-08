@@ -49,13 +49,13 @@ export default function RegisterModal({ onClose, onSuccess }: RegisterModalProps
       }
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+    if (!meetsMinimumRequirements(formData.password)) {
+      setError('Password must be at least 8 characters and include uppercase, lowercase, number, and special character');
       return;
     }
 
-    if (!meetsMinimumRequirements(formData.password)) {
-      setError('Password must be at least 8 characters and include uppercase, lowercase, number, and special character');
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 

@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useShops } from '../hooks/useShops';
 import { useInspections } from '../hooks/useInspections';
 import { useDocuments } from '../hooks/useDocuments';
-import { LogOut, Home, Store, ClipboardCheck, HelpCircle, Settings } from 'lucide-react';
+import { LogOut, Home, Store, ClipboardCheck, HelpCircle, Settings, Menu, X } from 'lucide-react';
 import { supabase } from '../integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -12,6 +13,7 @@ export default function GovernmentDashboard() {
   const { shops } = useShops();
   const { inspections } = useInspections();
   const { documents } = useDocuments();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -41,49 +43,61 @@ export default function GovernmentDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Navigation */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-gradient-to-r from-emerald-600 to-teal-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4 border-b">
+          <div className="flex justify-between items-center py-4">
             <Link to="/" className="flex items-center space-x-2">
               <img src="/logo.png" alt="SSRMS Logo" className="w-8 h-8 rounded-lg" />
-              <h1 className="text-2xl font-bold text-gray-900">Government Dashboard</h1>
+              <h1 className="text-2xl font-bold text-white">Government Dashboard</h1>
             </Link>
-            <p className="text-gray-600">Welcome, {profile?.full_name || user?.email}</p>
-          </div>
-          <nav className="flex items-center justify-between py-3">
-            <div className="flex gap-6">
-              <Link to="/dashboard" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
-                <Home className="w-4 h-4" />
-                <span className="text-sm font-medium">Home</span>
-              </Link>
-              <Link to="/shop-management" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
-                <Store className="w-4 h-4" />
-                <span className="text-sm font-medium">Shop Management</span>
-              </Link>
-              <Link to="/inspections" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
-                <ClipboardCheck className="w-4 h-4" />
-                <span className="text-sm font-medium">Inspections</span>
-              </Link>
-              <Link to="/support" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
-                <HelpCircle className="w-4 h-4" />
-                <span className="text-sm font-medium">Support</span>
-              </Link>
-            </div>
             <div className="flex items-center gap-4">
-              <Link to="/profile" className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition-colors">
-                <Settings className="w-4 h-4" />
-                <span className="text-sm font-medium">Profile</span>
-              </Link>
+              <p className="text-white hidden md:block">Welcome, {profile?.full_name || user?.email}</p>
               <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-white p-2 hover:bg-emerald-700 rounded-lg transition-colors"
               >
-                <LogOut className="w-4 h-4" />
-                Sign Out
+                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
-          </nav>
+          </div>
         </div>
+        
+        {/* Mobile/Toggle Menu */}
+        {isMenuOpen && (
+          <div className="bg-white border-t border-emerald-500">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+              <nav className="flex flex-col space-y-2">
+                <Link to="/dashboard" className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <Home className="w-5 h-5" />
+                  <span className="font-medium">Home</span>
+                </Link>
+                <Link to="/shop-management" className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <Store className="w-5 h-5" />
+                  <span className="font-medium">Shop Management</span>
+                </Link>
+                <Link to="/inspections" className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <ClipboardCheck className="w-5 h-5" />
+                  <span className="font-medium">Inspections</span>
+                </Link>
+                <Link to="/support" className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <HelpCircle className="w-5 h-5" />
+                  <span className="font-medium">Support</span>
+                </Link>
+                <Link to="/profile" className="flex items-center gap-2 text-gray-700 hover:text-emerald-600 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                  <Settings className="w-5 h-5" />
+                  <span className="font-medium">Profile</span>
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center gap-2 px-3 py-2 text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors font-medium"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Sign Out
+                </button>
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
       <div className="max-w-7xl mx-auto p-6 space-y-6">
