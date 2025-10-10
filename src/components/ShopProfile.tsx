@@ -257,8 +257,20 @@ export default function ShopProfile() {
                   <div>
                     <p className="font-medium text-gray-900">Trading Hours</p>
                     {shop.trading_hours ? (
-                      <div className="text-gray-600">
-                        {JSON.stringify(shop.trading_hours)}
+                      <div className="text-gray-600 space-y-1">
+                        {Object.entries(shop.trading_hours as Record<string, any>).map(([day, hours]) => {
+                          const dayName = day.charAt(0).toUpperCase() + day.slice(1);
+                          if (typeof hours === 'boolean') {
+                            return (
+                              <p key={day}>{dayName}: {hours ? 'Open' : 'Closed'}</p>
+                            );
+                          } else if (hours && typeof hours === 'object' && 'open' in hours && 'close' in hours) {
+                            return (
+                              <p key={day}>{dayName}: {hours.open} - {hours.close}</p>
+                            );
+                          }
+                          return null;
+                        })}
                       </div>
                     ) : (
                       <>

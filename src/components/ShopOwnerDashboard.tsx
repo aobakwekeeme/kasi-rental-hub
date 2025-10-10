@@ -29,7 +29,7 @@ const ShopOwnerDashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header with Navigation */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-700 shadow-lg">
+      <header className="shop-gradient shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <Link to="/" className="flex items-center space-x-2">

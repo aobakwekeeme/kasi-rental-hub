@@ -29,7 +29,7 @@ export default function CustomerDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header with Navigation */}
-      <header className="bg-gradient-to-r from-pink-600 to-rose-600 shadow-lg">
+      <header className="customer-gradient shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <Link to="/" className="flex items-center space-x-2">
