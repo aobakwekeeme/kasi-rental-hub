@@ -226,8 +226,9 @@ export default function InspectionManagementPage() {
                     required
                   >
                     <option value="routine">Routine</option>
-                    <option value="follow_up">Follow-up</option>
-                    <option value="complaint">Complaint Investigation</option>
+                    <option value="follow-up">Follow-up</option>
+                    <option value="complaint">Complaint</option>
+                    <option value="initial">Initial</option>
                   </select>
                 </div>
 

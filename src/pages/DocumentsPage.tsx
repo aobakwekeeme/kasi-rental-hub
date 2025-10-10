@@ -32,6 +32,13 @@ export default function DocumentsPage() {
       return;
     }
 
+    // Check file size (max 5MB)
+    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+    if (file.size > maxSize) {
+      toast.error('File size must be less than 5MB');
+      return;
+    }
+
     try {
       setUploading(true);
       
@@ -43,7 +50,10 @@ export default function DocumentsPage() {
         .from('documents')
         .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Storage upload error:', uploadError);
+        throw uploadError;
+      }
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
@@ -62,16 +72,19 @@ export default function DocumentsPage() {
           status: 'pending'
         });
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error('Database insert error:', insertError);
+        throw insertError;
+      }
 
       toast.success('Document uploaded successfully');
       setSelectedType('');
       setDocumentName('');
       setExpiryDate('');
       refetch();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error('Failed to upload document');
+      toast.error(error?.message || 'Failed to upload document');
     } finally {
       setUploading(false);
     }
@@ -179,7 +192,7 @@ export default function DocumentsPage() {
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
               />
             </label>
-            <p className="text-sm text-gray-500 mt-2">PDF, DOC, or Image files up to 10MB</p>
+            <p className="text-sm text-gray-500 mt-2">PDF, DOC, or Image files up to 5MB</p>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, Check, X, Eye, FileText } from 'lucide-react';
+import { ArrowLeft, Check, X, Eye, FileText, Star, Ban } from 'lucide-react';
 import { useShops } from '../hooks/useShops';
 import { useDocuments } from '../hooks/useDocuments';
 import { supabase } from '../integrations/supabase/client';
@@ -46,6 +46,44 @@ export default function ShopManagementPage() {
       toast.error('Failed to reject shop');
     }
   };
+
+  const handleStatusChange = async (shopId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('shops')
+        .update({ status: newStatus })
+        .eq('id', shopId);
+
+      if (error) throw error;
+      toast.success(`Shop status updated to ${newStatus}`);
+      refetch();
+    } catch (error) {
+      toast.error('Failed to update shop status');
+    }
+  };
+
+  // Fetch reviews for selected shop
+  const [reviews, setReviews] = useState<any[]>([]);
+  
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!selectedShop) {
+        setReviews([]);
+        return;
+      }
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*, profiles(full_name)')
+        .eq('shop_id', selectedShop)
+        .order('created_at', { ascending: false });
+      
+      if (!error && data) {
+        setReviews(data);
+      }
+    };
+    
+    fetchReviews();
+  }, [selectedShop]);
 
   const shopDocuments = selectedShop 
     ? documents.filter(doc => doc.shop_id === selectedShop)
@@ -139,6 +177,22 @@ export default function ShopManagementPage() {
                                 </button>
                               </>
                             )}
+                            {(shop.status === 'approved' || shop.status === 'suspended') && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleStatusChange(shop.id, shop.status === 'approved' ? 'suspended' : 'approved');
+                                }}
+                                className={`p-2 rounded-lg ${
+                                  shop.status === 'approved' 
+                                    ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' 
+                                    : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'
+                                }`}
+                                title={shop.status === 'approved' ? 'Suspend' : 'Restore'}
+                              >
+                                {shop.status === 'approved' ? <Ban className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+                              </button>
+                            )}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -210,6 +264,39 @@ export default function ShopManagementPage() {
                             ))
                           ) : (
                             <p className="text-sm text-muted-foreground">No documents uploaded</p>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <label className="text-sm font-medium text-muted-foreground mb-2 block flex items-center">
+                          <Star className="w-4 h-4 mr-1 text-amber-500" />
+                          Reviews ({reviews.length})
+                        </label>
+                        <div className="space-y-2 max-h-64 overflow-y-auto">
+                          {reviews.length > 0 ? (
+                            reviews.map((review: any) => (
+                              <div key={review.id} className="p-3 bg-muted/30 rounded">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-sm font-medium text-foreground">
+                                    {review.profiles?.full_name || 'Anonymous'}
+                                  </span>
+                                  <div className="flex items-center">
+                                    {Array.from({ length: review.rating }).map((_, i) => (
+                                      <Star key={i} className="w-3 h-3 fill-amber-500 text-amber-500" />
+                                    ))}
+                                  </div>
+                                </div>
+                                {review.comment && (
+                                  <p className="text-xs text-muted-foreground">{review.comment}</p>
+                                )}
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  {new Date(review.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-muted-foreground">No reviews yet</p>
                           )}
                         </div>
                       </div>
